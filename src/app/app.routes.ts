@@ -6,6 +6,7 @@ import { Events } from './features/events/events';
 import { Gallery } from './features/gallery/gallery';
 import { Teachers } from './features/teachers/teachers';
 import { About } from './pages/about/about';
+import { Login } from './login/login';
 
 export const routes: Routes = [
     { 'path': '', component: Home},
@@ -16,5 +17,6 @@ export const routes: Routes = [
     { 'path': 'teachers', component: Teachers },
     { 'path': 'contact', component: ContactForm },
     { 'path': 'about', component: About },
+    { 'path': 'dashboard', component: Login },
 
 ];
