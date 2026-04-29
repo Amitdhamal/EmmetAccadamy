@@ -52,7 +52,6 @@ export class CoursesComponent  implements OnInit {
   ngOnInit() {
     this.filtercats = this.data.getcatories();
     this.filterStatusArr = this.data.getCouseStatus();
-    console.log('Available course categories:', this.filtercats);
   }
 
   emptyForm() {

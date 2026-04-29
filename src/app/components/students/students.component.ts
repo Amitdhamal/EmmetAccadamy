@@ -55,15 +55,16 @@ export class StudentsComponent {
     return { name: '', email: '', phone: '', course: '', batch: '', status: 'active' as Student['status'], totalFee: 0, paidAmount: 0, enrollmentDateStr: new Date().toISOString().split('T')[0], address: '' };
   }
 
-  onInputChnage(){
+  onInputChange() {
+    // Trigger change detection by re-computing the filtered list
     this.filteredStudents = computed(() => {
-    let list = this.data.students();
-    if (this.search) { const s = this.search.toLowerCase(); list = list.filter(x => x.name.toLowerCase().includes(s) || x.email.toLowerCase().includes(s)); }
-    if (this.filterStatus) list = list.filter(x => x.status === this.filterStatus);
-    if (this.filterFee === 'paid') list = list.filter(x => x.paidAmount >= x.totalFee);
-    if (this.filterFee === 'pending') list = list.filter(x => x.paidAmount < x.totalFee);
-    return list;
-  });
+      let list = this.data.students();
+      if (this.search) { const s = this.search.toLowerCase(); list = list.filter(x => x.name.toLowerCase().includes(s) || x.email.toLowerCase().includes(s)); }
+      if (this.filterStatus) list = list.filter(x => x.status === this.filterStatus);
+      if (this.filterFee === 'paid') list = list.filter(x => x.paidAmount >= x.totalFee);
+      if (this.filterFee === 'pending') list = list.filter(x => x.paidAmount < x.totalFee);
+      return list;
+    });
   }
 
   oncourseselect() {

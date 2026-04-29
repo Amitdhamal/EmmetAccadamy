@@ -27,7 +27,7 @@ export class BatchesComponent {
   deleteTarget = signal<Batch | null>(null);
 
   batchForm = this.fb.group({
-    name: ['aaaa', Validators.required],
+    name: ['', Validators.required],
     courseId: ['', Validators.required],
     courseName: [''],
     instructor: [''],
@@ -42,9 +42,6 @@ export class BatchesComponent {
 
   filteredBatches = computed(() => {
     let list = this.data.batches();
-    // if (this.search) { const s = this.search.toLowerCase(); list = list.filter(x => x.name.toLowerCase().includes(s) || x.courseName.toLowerCase().includes(s)); }
-    // if (this.filterStatus) list = list.filter(x => x.status === this.filterStatus);
-    console.log('Filtered batches:', list, 'Search:', this.search, 'Status:', this.filterStatus);
     return list;
   });
 
@@ -89,14 +86,14 @@ export class BatchesComponent {
     this.modalOpen.set(true);
   }
 
-  oninptChnage(){
+  onInputChange() {
+    // Trigger change detection by re-computing the filtered list
     this.filteredBatches = computed(() => {
-    let list = this.data.batches();
-    if (this.search) { const s = this.search.toLowerCase(); list = list.filter(x => x.name.toLowerCase().includes(s) || x.courseName.toLowerCase().includes(s)); }
-    if (this.filterStatus) list = list.filter(x => x.status === this.filterStatus);
-    console.log('Filtered batches:', list, 'Search:', this.search, 'Status:', this.filterStatus);
-    return list;
-  });
+      let list = this.data.batches();
+      if (this.search) { const s = this.search.toLowerCase(); list = list.filter(x => x.name.toLowerCase().includes(s) || x.courseName.toLowerCase().includes(s)); }
+      if (this.filterStatus) list = list.filter(x => x.status === this.filterStatus);
+      return list;
+    });
   }
 
   closeModal(e: Event) { if (e.target === e.currentTarget) this.closeModalDirect(); }

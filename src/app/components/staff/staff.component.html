@@ -28,14 +28,14 @@
 
       <!-- Filters -->
       <div class="search-bar">
-        <input class="form-control" type="text" placeholder="Search staff…" (change)="onChnageinput()" [(ngModel)]="search">
-        <select class="form-control" [(ngModel)]="filterDept" (change)="onChnageinput()" style="max-width:160px">
+        <input class="form-control" type="text" placeholder="Search staff…" (change)="onInputChange()" [(ngModel)]="search">
+        <select class="form-control" [(ngModel)]="filterDept" (change)="onInputChange()" style="max-width:160px">
           <option value="">All Departments</option>
             @for(dept of AlldeptsArray; track dept) {
                 <option [value]="dept">{{ dept | titlecase }}</option>
             }
         </select>
-        <select class="form-control" [(ngModel)]="filterRole" (change)="onChnageinput()" style="max-width:160px">
+        <select class="form-control" [(ngModel)]="filterRole" (change)="onInputChange()" style="max-width:160px">
           <option value="">All Roles</option>
             @for(role of AllStaffRolesArray; track role) {
                 <option [value]="role">{{ role | titlecase }}</option>

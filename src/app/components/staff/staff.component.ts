@@ -64,17 +64,18 @@ export class StaffComponent implements OnInit {
     this.AllStaffRolesArray = this.data.getAllStaffRoles();
   }
 
-  onChnageinput(){
+  onInputChange() {
+    // Trigger change detection by re-computing the filtered list
     this.filteredStaff = computed(() => {
-    let list = this.data.staff();
-    if (this.search) {
-      const s = this.search.toLowerCase();
-      list = list.filter(x => x.name.toLowerCase().includes(s) || x.email.toLowerCase().includes(s));
-    }
-    if (this.filterDept) list = list.filter(x => x.department === this.filterDept);
-    if (this.filterRole) list = list.filter(x => x.role === this.filterRole);
-    return list;
-  });
+      let list = this.data.staff();
+      if (this.search) {
+        const s = this.search.toLowerCase();
+        list = list.filter(x => x.name.toLowerCase().includes(s) || x.email.toLowerCase().includes(s));
+      }
+      if (this.filterDept) list = list.filter(x => x.department === this.filterDept);
+      if (this.filterRole) list = list.filter(x => x.role === this.filterRole);
+      return list;
+    });
   }
 
   openModal(staff?: Staff) {

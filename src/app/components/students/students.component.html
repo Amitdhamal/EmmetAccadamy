@@ -32,15 +32,15 @@
 
       <!-- Filters -->
       <div class="search-bar">
-        <input class="form-control" type="text" placeholder="Search students…" (change)="onInputChnage()" [(ngModel)]="search">
-        <select class="form-control" [(ngModel)]="filterStatus" (change)="onInputChnage()" style="max-width:160px">
+        <input class="form-control" type="text" placeholder="Search students…" (change)="onInputChange()" [(ngModel)]="search">
+        <select class="form-control" [(ngModel)]="filterStatus" (change)="onInputChange()" style="max-width:160px">
           <option value="">All Status</option>
           <option value="active">Active</option>
           <option value="completed">Completed</option>
           <option value="dropped">Dropped</option>
           <option value="pending">Pending</option>
         </select>
-        <select class="form-control" [(ngModel)]="filterFee" style="max-width:160px">
+        <select class="form-control" [(ngModel)]="filterFee" (change)="onInputChange()" style="max-width:160px">
           <option value="">All Fees</option>
           <option value="paid">Paid</option>
           <option value="pending">Pending</option>

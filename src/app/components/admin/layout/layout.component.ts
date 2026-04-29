@@ -26,7 +26,6 @@ export class LayoutComponent {
     const user = this.auth.currentUser();
     const role = user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Unknown';
     this.role = user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Unknown';
-    console.log('Admin layout initialized. Current user:', this.role);
   }
   mainNav: NavItem[] = [
     { path: 'dashboard', icon: 'dashboard', label: 'Dashboard' },

@@ -77,19 +77,18 @@ export class NoticesComponent {
     this.modalOpen.set(true);
   }
 
-  oninputChnage(){
-    
+  onInputChange() {
+    // Trigger change detection by re-computing the filtered list
     this.filteredNotices = computed(() => {
-    let notices = this.data.notices();
-    if (this.search) {
-      console.log('Filtering notices with search:', this.search);
-      const s = this.search.toLowerCase();
-      notices = notices.filter(n => n.title.toLowerCase().includes(s) || n.content.toLowerCase().includes(s));
-    }
-    if (this.filterCategory) notices = notices.filter(n => n.category === this.filterCategory);
-    if (this.filterAudience) notices = notices.filter(n => n.targetAudience === this.filterAudience);
-    return notices;
-  });
+      let notices = this.data.notices();
+      if (this.search) {
+        const s = this.search.toLowerCase();
+        notices = notices.filter(n => n.title.toLowerCase().includes(s) || n.content.toLowerCase().includes(s));
+      }
+      if (this.filterCategory) notices = notices.filter(n => n.category === this.filterCategory);
+      if (this.filterAudience) notices = notices.filter(n => n.targetAudience === this.filterAudience);
+      return notices;
+    });
   }
 
   closeModal(e: Event) { if (e.target === e.currentTarget) this.closeModalDirect(); }

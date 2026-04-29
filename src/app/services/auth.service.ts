@@ -45,7 +45,6 @@ export class AuthService {
 
   readonly authState = this._authState.asReadonly();
   readonly currentUser = computed(() => {
-    console.log('Current user:', this._authState().user);
     return this._authState().user
   });
   readonly isLoggedIn = computed(() => this._authState().isLoggedIn);

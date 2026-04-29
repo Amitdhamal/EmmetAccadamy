@@ -328,7 +328,6 @@ export class DataService {
     if (course) {
       course.enrolledCount += 1;
     }
-    console.log('Adding student:', student, 'Course found:', course);
     const newStudent: Student = { ...student, id: this.genId('stu'), createdAt: new Date() };
     this._students.update(list => [newStudent, ...list]);
     return newStudent;
@@ -387,24 +386,20 @@ export class DataService {
   readonly courses = this._courses.asReadonly();
   getcatories() {
     const cats = new Set(this._courses().map(c => c.category));
-    console.log('Course categories:', cats);
     return Array.from(cats);
   }
   getCouseStatus() {
     const status = new Set(this._courses().map(c => c.status));
-    console.log('Course categories:', status);
     return Array.from(status);
   }
 
   getAllDepartments() {
     const depts = new Set(this._staff().map(s => s.department));
-    console.log('Staff departments:', depts);
     return Array.from(depts);
   }
 
   getAllStaffRoles() {
     const roles = new Set(this._staff().map(s => s.role));
-    console.log('Staff roles:', roles);
     return Array.from(roles);
   }
 

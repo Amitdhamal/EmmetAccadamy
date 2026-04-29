@@ -14,8 +14,8 @@
 
       <!-- Filters -->
       <div class="search-bar">
-        <input class="form-control" type="text" placeholder="Search batches…" (change)="oninptChnage()" [(ngModel)]="search">
-        <select class="form-control" [(ngModel)]="filterStatus" (change)="oninptChnage()" style="max-width:160px">
+        <input class="form-control" type="text" placeholder="Search batches…" (change)="onInputChange()" [(ngModel)]="search">
+        <select class="form-control" [(ngModel)]="filterStatus" (change)="onInputChange()" style="max-width:160px">
           <option value="">All Status</option>
           <option value="ongoing">Ongoing</option>
           <option value="upcoming">Upcoming</option>
