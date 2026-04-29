@@ -134,6 +134,7 @@ export class DataService {
   // STUDENTS
   // ===========================
   private _students = signal<Student[]>([
+    // --- Original 6 ---
     {
       id: 'st1', name: 'Arjun Mehta', email: 'arjun@gmail.com', phone: '9321098765',
       course: 'Full Stack Development', batch: 'FS-Jan-2025',
@@ -175,6 +176,148 @@ export class DataService {
       enrollmentDate: new Date('2025-01-20'), status: 'pending',
       feePaid: false, totalFee: 45000, paidAmount: 0,
       address: 'Kolhapur, Maharashtra', createdAt: new Date('2025-01-20')
+    },
+
+    // --- 20 New Students ---
+    {
+      id: 'st7', name: 'Rohan Deshmukh', email: 'rohan.deshmukh@gmail.com', phone: '9312345678',
+      course: 'Full Stack Development', batch: 'FS-Feb-2025',
+      enrollmentDate: new Date('2025-02-01'), status: 'active',
+      feePaid: true, totalFee: 45000, paidAmount: 45000,
+      address: 'Pune, Maharashtra', createdAt: new Date('2025-02-01')
+    },
+    {
+      id: 'st8', name: 'Sneha Kulkarni', email: 'sneha.kulkarni@gmail.com', phone: '9223456789',
+      course: 'Frontend Development', batch: 'FE-Feb-2025',
+      enrollmentDate: new Date('2025-02-03'), status: 'active',
+      feePaid: false, totalFee: 28000, paidAmount: 14000,
+      address: 'Pune, Maharashtra', createdAt: new Date('2025-02-03')
+    },
+    {
+      id: 'st9', name: 'Karan Joshi', email: 'karan.joshi@gmail.com', phone: '9134567890',
+      course: 'Backend Development', batch: 'BE-Jan-2025',
+      enrollmentDate: new Date('2025-01-10'), status: 'active',
+      feePaid: true, totalFee: 32000, paidAmount: 32000,
+      address: 'Mumbai, Maharashtra', createdAt: new Date('2025-01-10')
+    },
+    {
+      id: 'st10', name: 'Pooja Patil', email: 'pooja.patil@gmail.com', phone: '9045678901',
+      course: 'Full Stack Development', batch: 'FS-Jan-2025',
+      enrollmentDate: new Date('2025-01-12'), status: 'active',
+      feePaid: false, totalFee: 45000, paidAmount: 22500,
+      address: 'Solapur, Maharashtra', createdAt: new Date('2025-01-12')
+    },
+    {
+      id: 'st11', name: 'Amit Sharma', email: 'amit.sharma@gmail.com', phone: '8956789012',
+      course: 'Backend Development', batch: 'BE-Dec-2024',
+      enrollmentDate: new Date('2024-12-10'), status: 'completed',
+      feePaid: true, totalFee: 32000, paidAmount: 32000,
+      address: 'Nagpur, Maharashtra', createdAt: new Date('2024-12-10')
+    },
+    {
+      id: 'st12', name: 'Priya Nair', email: 'priya.nair@gmail.com', phone: '8867890123',
+      course: 'Frontend Development', batch: 'FE-Jan-2025',
+      enrollmentDate: new Date('2025-01-14'), status: 'active',
+      feePaid: true, totalFee: 28000, paidAmount: 28000,
+      address: 'Thane, Maharashtra', createdAt: new Date('2025-01-14')
+    },
+    {
+      id: 'st13', name: 'Vishal More', email: 'vishal.more@gmail.com', phone: '9378901234',
+      course: 'Full Stack Development', batch: 'FS-Feb-2025',
+      enrollmentDate: new Date('2025-02-05'), status: 'active',
+      feePaid: false, totalFee: 45000, paidAmount: 0,
+      address: 'Nashik, Maharashtra', createdAt: new Date('2025-02-05')
+    },
+    {
+      id: 'st14', name: 'Deepika Iyer', email: 'deepika.iyer@gmail.com', phone: '9289012345',
+      course: 'Backend Development', batch: 'BE-Jan-2025',
+      enrollmentDate: new Date('2025-01-18'), status: 'active',
+      feePaid: false, totalFee: 32000, paidAmount: 16000,
+      address: 'Aurangabad, Maharashtra', createdAt: new Date('2025-01-18')
+    },
+    {
+      id: 'st15', name: 'Nikhil Bane', email: 'nikhil.bane@gmail.com', phone: '9190123456',
+      course: 'Frontend Development', batch: 'FE-Nov-2024',
+      enrollmentDate: new Date('2024-11-20'), status: 'dropped',
+      feePaid: false, totalFee: 28000, paidAmount: 7000,
+      address: 'Kolhapur, Maharashtra', createdAt: new Date('2024-11-20')
+    },
+    {
+      id: 'st16', name: 'Sakshi Shinde', email: 'sakshi.shinde@gmail.com', phone: '9001234567',
+      course: 'Full Stack Development', batch: 'FS-Jan-2025',
+      enrollmentDate: new Date('2025-01-22'), status: 'pending',
+      feePaid: false, totalFee: 45000, paidAmount: 0,
+      address: 'Pune, Maharashtra', createdAt: new Date('2025-01-22')
+    },
+    {
+      id: 'st17', name: 'Rahul Wagh', email: 'rahul.wagh@gmail.com', phone: '8912345670',
+      course: 'Backend Development', batch: 'BE-Feb-2025',
+      enrollmentDate: new Date('2025-02-08'), status: 'active',
+      feePaid: true, totalFee: 32000, paidAmount: 32000,
+      address: 'Mumbai, Maharashtra', createdAt: new Date('2025-02-08')
+    },
+    {
+      id: 'st18', name: 'Ananya Bhosale', email: 'ananya.bhosale@gmail.com', phone: '8823456701',
+      course: 'Frontend Development', batch: 'FE-Feb-2025',
+      enrollmentDate: new Date('2025-02-10'), status: 'active',
+      feePaid: true, totalFee: 28000, paidAmount: 28000,
+      address: 'Nagpur, Maharashtra', createdAt: new Date('2025-02-10')
+    },
+    {
+      id: 'st19', name: 'Siddharth Rane', email: 'siddharth.rane@gmail.com', phone: '9734567012',
+      course: 'Full Stack Development', batch: 'FS-Mar-2025',
+      enrollmentDate: new Date('2025-03-01'), status: 'pending',
+      feePaid: false, totalFee: 45000, paidAmount: 0,
+      address: 'Nashik, Maharashtra', createdAt: new Date('2025-03-01')
+    },
+    {
+      id: 'st20', name: 'Meera Pillai', email: 'meera.pillai@gmail.com', phone: '9645670123',
+      course: 'Backend Development', batch: 'BE-Feb-2025',
+      enrollmentDate: new Date('2025-02-12'), status: 'active',
+      feePaid: false, totalFee: 32000, paidAmount: 8000,
+      address: 'Thane, Maharashtra', createdAt: new Date('2025-02-12')
+    },
+    {
+      id: 'st21', name: 'Aakash Tiwari', email: 'aakash.tiwari@gmail.com', phone: '9556701234',
+      course: 'Frontend Development', batch: 'FE-Dec-2024',
+      enrollmentDate: new Date('2024-12-05'), status: 'completed',
+      feePaid: true, totalFee: 28000, paidAmount: 28000,
+      address: 'Solapur, Maharashtra', createdAt: new Date('2024-12-05')
+    },
+    {
+      id: 'st22', name: 'Neha Jadhav', email: 'neha.jadhav@gmail.com', phone: '9467012345',
+      course: 'Full Stack Development', batch: 'FS-Feb-2025',
+      enrollmentDate: new Date('2025-02-15'), status: 'active',
+      feePaid: true, totalFee: 45000, paidAmount: 45000,
+      address: 'Pune, Maharashtra', createdAt: new Date('2025-02-15')
+    },
+    {
+      id: 'st23', name: 'Omkar Sawant', email: 'omkar.sawant@gmail.com', phone: '9378123456',
+      course: 'Backend Development', batch: 'BE-Jan-2025',
+      enrollmentDate: new Date('2025-01-25'), status: 'active',
+      feePaid: false, totalFee: 32000, paidAmount: 16000,
+      address: 'Kolhapur, Maharashtra', createdAt: new Date('2025-01-25')
+    },
+    {
+      id: 'st24', name: 'Tanvi Deshpande', email: 'tanvi.deshpande@gmail.com', phone: '9289234567',
+      course: 'Frontend Development', batch: 'FE-Feb-2025',
+      enrollmentDate: new Date('2025-02-18'), status: 'active',
+      feePaid: false, totalFee: 28000, paidAmount: 14000,
+      address: 'Aurangabad, Maharashtra', createdAt: new Date('2025-02-18')
+    },
+    {
+      id: 'st25', name: 'Yash Kadam', email: 'yash.kadam@gmail.com', phone: '9190345678',
+      course: 'Full Stack Development', batch: 'FS-Mar-2025',
+      enrollmentDate: new Date('2025-03-05'), status: 'pending',
+      feePaid: false, totalFee: 45000, paidAmount: 22500,
+      address: 'Mumbai, Maharashtra', createdAt: new Date('2025-03-05')
+    },
+    {
+      id: 'st26', name: 'Ishaan Chavan', email: 'ishaan.chavan@gmail.com', phone: '9001456789',
+      course: 'Backend Development', batch: 'BE-Mar-2025',
+      enrollmentDate: new Date('2025-03-08'), status: 'active',
+      feePaid: true, totalFee: 32000, paidAmount: 32000,
+      address: 'Pune, Maharashtra', createdAt: new Date('2025-03-08')
     }
   ]);
 
