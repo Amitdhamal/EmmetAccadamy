@@ -1,0 +1,121 @@
+
+    <div class="dashboard">
+      <!-- Welcome -->
+      <div class="welcome-banner">
+        <div>
+          <h2>Good {{ greeting() }}, {{ auth.currentUser()?.name?.split(' ')?.[0] ?? '' }}! 👋</h2>
+          <p class="text-dim">Here's what's happening at EmmetAcademy  today.</p>
+        </div>
+        <div class="date-pill">{{ today | date:'EEE, MMM d, y' }}</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(255,107,43,0.15)">
+            <span class="material-icons text-orange">school</span>
+          </div>
+          <div class="stat-info">
+            <div class="value">{{ stats().totalStudents }}</div>
+            <div class="label">Total Students</div>
+            <div style="font-size:12px;color:var(--success);margin-top:2px">{{ stats().activeStudents }} active</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,212,255,0.1)">
+            <span class="material-icons" style="color:var(--cyan)">people</span>
+          </div>
+          <div class="stat-info">
+            <div class="value">{{ stats().totalStaff }}</div>
+            <div class="label">Staff Members</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(16,212,142,0.12)">
+            <span class="material-icons text-success">menu_book</span>
+          </div>
+          <div class="stat-info">
+            <div class="value">{{ stats().totalCourses }}</div>
+            <div class="label">Active Courses</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(245,197,66,0.12)">
+            <span class="material-icons" style="color:var(--warning)">campaign</span>
+          </div>
+          <div class="stat-info">
+            <div class="value">{{ stats().activeNotices }}</div>
+            <div class="label">Active Notices</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(16,212,142,0.12)">
+            <span class="material-icons text-success">currency_rupee</span>
+          </div>
+          <div class="stat-info">
+            <div class="value">₹{{ (stats().totalRevenue / 1000).toFixed(0) }}K</div>
+            <div class="label">Revenue Collected</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(255,77,109,0.12)">
+            <span class="material-icons text-danger">pending</span>
+          </div>
+          <div class="stat-info">
+            <div class="value">₹{{ (stats().pendingFees / 1000).toFixed(0) }}K</div>
+            <div class="label">Pending Fees</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-grid">
+        <!-- Recent Notices -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+            <h3 style="font-size:18px">📢 Recent Notices</h3>
+            <a routerLink="/notices" class="btn btn-secondary btn-sm">View All</a>
+          </div>
+          @for (notice of recentNotices(); track notice.id) {
+            <div class="notice-item">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                <span class="badge badge-{{ getCategoryColor(notice.category) }}">{{ notice.category }}</span>
+                @if (notice.isPinned) { <span class="material-icons" style="font-size:14px!important;color:var(--orange)">push_pin</span> }
+              </div>
+              <div style="font-size:15px;font-weight:500">{{ notice.title }}</div>
+              <div style="font-size:12px;color:var(--white-dim);margin-top:2px">
+                By {{ notice.postedBy }} · {{ notice.createdAt | date:'MMM d' }}
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Ongoing Batches -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+            <h3 style="font-size:18px">🎓 Ongoing Batches</h3>
+            <a routerLink="/batches" class="btn btn-secondary btn-sm">View All</a>
+          </div>
+          @for (batch of ongoingBatches(); track batch.id) {
+            <div class="batch-item">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-size:15px;font-weight:600">{{ batch.name }}</div>
+                  <div style="font-size:12px;color:var(--white-dim)">{{ batch.courseName }}</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:13px;color:var(--orange)">{{ batch.enrolled }}/{{ batch.capacity }}</div>
+                  <div style="font-size:11px;color:var(--white-dim)">enrolled</div>
+                </div>
+              </div>
+              <div class="capacity-bar" style="margin-top:8px">
+                <div class="capacity-fill" [style.width]="(batch.enrolled / batch.capacity * 100) + '%'"></div>
+              </div>
+              <div style="font-size:12px;color:var(--white-dim);margin-top:4px">{{ batch.timing }} · {{ batch.instructor }}</div>
+            </div>
+          }
+          @if (ongoingBatches().length === 0) {
+            <div style="text-align:center;padding:20px;color:var(--white-dim)">No ongoing batches</div>
+          }
+        </div>
+      </div>
+    </div>

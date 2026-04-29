@@ -1,0 +1,178 @@
+    <div>
+      <div class="page-header">
+        <div>
+          <h2>📢 Notice Board</h2>
+          <p class="text-dim">Manage and publish notices for students and staff</p>
+        </div>
+        @if (auth.isAdmin()) {
+          <button class="btn btn-primary" (click)="openModal()">
+            <span class="material-icons">add</span> Post Notice
+          </button>
+        }
+      </div>
+
+      <!-- Filters -->
+      <div class="search-bar">
+        <input class="form-control" type="text" placeholder="Search notices…" [(ngModel)]="search" (change)="oninputChnage()" style="max-width:300px">
+        <select class="form-control" [(ngModel)]="filterCategory" (change)="oninputChnage()" style="max-width:180px">
+          <option value="">All Categories</option>
+          <option value="general">General</option>
+          <option value="exam">Exam</option>
+          <option value="holiday">Holiday</option>
+          <option value="event">Event</option>
+          <option value="urgent">Urgent</option>
+          <option value="fee">Fee</option>
+        </select>
+        <select class="form-control" [(ngModel)]="filterAudience" (change)="oninputChnage()" style="max-width:180px">
+          <option value="">All Audience</option>
+          <option value="all">All</option>
+          <option value="students">Students</option>
+          <option value="staff">Staff</option>
+        </select>
+      </div>
+
+      <!-- Pinned notices -->
+      @if (pinnedNotices().length > 0) {
+        <div class="pinned-section">
+          <div class="section-title"><span class="material-icons" style="color:var(--orange)">push_pin</span> Pinned</div>
+          @for (notice of pinnedNotices(); track notice.id) {
+            <div class="notice-card pinned">
+              <ng-container *ngTemplateOutlet="noticeCard; context: {notice: notice}"></ng-container>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- All notices -->
+      <div class="notices-list">
+        @for (notice of filteredNotices(); track notice.id) {
+          @if (!notice.isPinned) {
+            <div class="notice-card">
+              <ng-container *ngTemplateOutlet="noticeCard; context: {notice: notice}"></ng-container>
+            </div>
+          }
+        }
+        @if (filteredNotices().length === 0) {
+          <div class="empty-state">
+            <span class="material-icons">campaign</span>
+            <p>No notices found</p>
+          </div>
+        }
+      </div>
+
+      <!-- Notice card template -->
+      <ng-template #noticeCard let-notice="notice">
+        <div class="notice-meta">
+          <span class="badge badge-{{ getCatColor(notice.category) }}">{{ notice.category | titlecase }}</span>
+          <span class="badge badge-secondary">{{ notice.targetAudience | titlecase }}</span>
+          @if (!notice.isActive) { <span class="badge badge-danger">Inactive</span> }
+          @if (notice.isPinned) { <span class="material-icons pin-icon">push_pin</span> }
+        </div>
+        <h3 class="notice-title">{{ notice.title }}</h3>
+        <p class="notice-content">{{ notice.content }}</p>
+        <div class="notice-footer">
+          <span style="font-size:12px;color:var(--white-dim)">
+            <span class="material-icons" style="font-size:14px!important;vertical-align:middle">person</span>
+            {{ notice.postedBy }} &middot;
+            <span class="material-icons" style="font-size:14px!important;vertical-align:middle">schedule</span>
+            {{ notice.createdAt | date:'MMM d, y' }}
+            @if (notice.expiryDate) { &middot; Expires {{ notice.expiryDate | date:'MMM d' }} }
+          </span>
+          @if (auth.isAdmin()) {
+            <div class="notice-actions">
+              <button class="btn btn-secondary btn-sm btn-icon" (click)="togglePin(notice)" title="Toggle Pin">
+                <span class="material-icons" style="font-size:16px!important">push_pin</span>
+              </button>
+              <button class="btn btn-secondary btn-sm btn-icon" (click)="openModal(notice)" title="Edit">
+                <span class="material-icons" style="font-size:16px!important">edit</span>
+              </button>
+              <button class="btn btn-danger btn-sm btn-icon" (click)="confirmDelete(notice)" title="Delete">
+                <span class="material-icons" style="font-size:16px!important">delete</span>
+              </button>
+            </div>
+          }
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Modal -->
+    @if (modalOpen()) {
+      <div class="modal-overlay" (click)="closeModal($event)">
+        <div class="modal">
+          <div class="modal-header">
+            <h3>{{ editing() ? 'Edit Notice' : 'Post New Notice' }}</h3>
+            <button class="btn btn-secondary btn-sm btn-icon" (click)="closeModalDirect()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+
+              <form [formGroup]="noticeForm">
+            <div class="form-group">
+              <label>Title *</label>
+              <input class="form-control" formControlName="title" placeholder="Notice title…">
+            </div>
+            <div class="form-group">
+              <label>Content *</label>
+              <textarea class="form-control" formControlName="content" rows="5" placeholder="Write the notice content…" style="resize:vertical"></textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div class="form-group">
+                <label>Category</label>
+                <select class="form-control" formControlName="category">
+                  <option value="general">General</option>
+                  <option value="exam">Exam</option>
+                  <option value="holiday">Holiday</option>
+                  <option value="event">Event</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="fee">Fee</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Target Audience</label>
+                <select class="form-control" formControlName="targetAudience">
+                  <option value="all">All</option>
+                  <option value="students">Students</option>
+                  <option value="staff">Staff</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Expiry Date (optional)</label>
+              <input class="form-control" type="date" formControlName="expiryDateStr">
+            </div>
+            <div style="display:flex;gap:20px">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+                <input type="checkbox" formControlName="isPinned"> Pin this notice
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+                <input type="checkbox" formControlName="isActive"> Active
+              </label>
+            </div>
+          </form>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModalDirect()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveNotice()">
+              <span class="material-icons">{{ editing() ? 'save' : 'send' }}</span>
+              {{ editing() ? 'Update' : 'Publish' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Delete confirm -->
+    @if (deleteTarget()) {
+      <div class="modal-overlay" (click)="deleteTarget.set(null)">
+        <div class="modal" style="max-width:400px" (click)="$event.stopPropagation()">
+          <h3 style="margin-bottom:12px">Delete Notice?</h3>
+          <p class="text-dim">Are you sure you want to delete "<strong>{{ deleteTarget()?.title }}</strong>"? This cannot be undone.</p>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="deleteTarget.set(null)">Cancel</button>
+            <button class="btn btn-danger" (click)="doDelete()">
+              <span class="material-icons">delete</span> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    }

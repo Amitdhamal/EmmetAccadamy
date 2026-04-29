@@ -1,0 +1,172 @@
+
+    <div>
+      <div class="page-header">
+        <div>
+          <h2>🗓️ Batches</h2>
+          <p class="text-dim">Manage course batches and schedules</p>
+        </div>
+        @if (auth.isAdmin()) {
+          <button class="btn btn-primary" (click)="openModal()">
+            <span class="material-icons">add</span> Add Batch
+          </button>
+        }
+      </div>
+
+      <!-- Filters -->
+      <div class="search-bar">
+        <input class="form-control" type="text" placeholder="Search batches…" (change)="oninptChnage()" [(ngModel)]="search">
+        <select class="form-control" [(ngModel)]="filterStatus" (change)="oninptChnage()" style="max-width:160px">
+          <option value="">All Status</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Batch</th>
+              <th>Course</th>
+              <th>Instructor</th>
+              <th>Timing</th>
+              <th>Room</th>
+              <th>Enrollment</th>
+              <th>Duration</th>
+              <th>Status</th>
+              @if (auth.isAdmin()) { <th>Actions</th> }
+            </tr>
+          </thead>
+          <tbody>
+            @for (b of filteredBatches(); track b.id) {
+              <tr>
+                <td style="font-weight:600;color:var(--orange)">{{ b.name }}</td>
+                <td style="font-size:13px">{{ b.courseName }}</td>
+                <td style="font-size:13px">{{ b.instructor }}</td>
+                <td style="font-size:13px">{{ b.timing }}</td>
+                <td><span class="badge badge-secondary">{{ b.room }}</span></td>
+                <td>
+                  <div style="font-size:13px">{{ b.enrolled }}/{{ b.capacity }}</div>
+                  <div class="mini-bar">
+                    <div class="mini-fill" [style.width]="(b.enrolled / b.capacity * 100) + '%'"></div>
+                  </div>
+                </td>
+                <td style="font-size:12px;color:var(--white-dim)">
+                  {{ b.startDate | date:'MMM d' }} – {{ b.endDate | date:'MMM d, y' }}
+                </td>
+                <td><span class="badge" [class]="getStatusBadge(b.status)">{{ b.status | titlecase }}</span></td>
+                @if (auth.isAdmin()) {
+                  <td>
+                    <div style="display:flex;gap:6px">
+                      <button class="btn btn-secondary btn-sm btn-icon" (click)="openModal(b)">
+                        <span class="material-icons" style="font-size:16px!important">edit</span>
+                      </button>
+                      <button class="btn btn-danger btn-sm btn-icon" (click)="confirmDelete(b)">
+                        <span class="material-icons" style="font-size:16px!important">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                }
+              </tr>
+            }
+            @if (filteredBatches().length === 0) {
+              <tr><td [attr.colspan]="auth.isAdmin() ? 9 : 8" style="text-align:center;padding:40px;color:var(--white-dim)">No batches found</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    @if (modalOpen()) {
+      <div class="modal-overlay" (click)="closeModal($event)">
+        <div class="modal" style="max-width:580px">
+          <div class="modal-header">
+            <h3>{{ editing() ? 'Edit Batch' : 'Add New Batch' }}</h3>
+            <button class="btn btn-secondary btn-sm btn-icon" (click)="closeModalDirect()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+          <form [formGroup]="batchForm" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="form-group">
+              <label>Batch Name *</label>
+              <input class="form-control" formControlName="name" placeholder="e.g. FS-Mar-2025">
+            </div>
+            <div class="form-group">
+              <label>Course *</label>
+              <select class="form-control" formControlName="courseId" (change)="onCourseSelect()">
+                <option value="">Select course</option>
+                @for (c of data.courses(); track c.id) {
+                  <option [value]="c.id">{{ c.title }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Instructor</label>
+              <select class="form-control" formControlName="instructor">
+                <option value="">Select instructor</option>
+                @for (s of data.activeStaff(); track s.id) {
+                  @if (s.role === 'instructor') {
+                    <option [value]="s.name">{{ s.name }}</option>
+                  }
+                }
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Room</label>
+              <input class="form-control" formControlName="room" placeholder="e.g. Lab 1">
+            </div>
+            <div class="form-group">
+              <label>Start Date</label>
+              <input class="form-control" type="date" formControlName="startDateStr">
+            </div>
+            <div class="form-group">
+              <label>End Date</label>
+              <input class="form-control" type="date" formControlName="endDateStr">
+            </div>
+            <div class="form-group">
+              <label>Timing</label>
+              <input class="form-control" formControlName="timing" placeholder="e.g. 10:00 AM – 1:00 PM">
+            </div>
+            <div class="form-group">
+              <label>Capacity</label>
+              <input class="form-control" type="number" formControlName="capacity">
+            </div>
+            <div class="form-group">
+              <label>Enrolled</label>
+              <input class="form-control" type="number" formControlName="enrolled">
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select class="form-control" formControlName="status">
+                <option value="ongoing">Ongoing</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </form>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModalDirect()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveBatch()">
+              <span class="material-icons">save</span> {{ editing() ? 'Update' : 'Add Batch' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Delete confirm -->
+    @if (deleteTarget()) {
+      <div class="modal-overlay" (click)="deleteTarget.set(null)">
+        <div class="modal" style="max-width:380px" (click)="$event.stopPropagation()">
+          <h3 style="margin-bottom:12px">Delete Batch?</h3>
+          <p class="text-dim">Delete batch <strong>{{ deleteTarget()?.name }}</strong>?</p>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="deleteTarget.set(null)">Cancel</button>
+            <button class="btn btn-danger" (click)="doDelete()"><span class="material-icons">delete</span> Delete</button>
+          </div>
+        </div>
+      </div>
+    }

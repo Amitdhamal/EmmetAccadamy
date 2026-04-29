@@ -1,0 +1,202 @@
+
+    <div>
+      <div class="page-header">
+        <div>
+          <h2>🎓 Students</h2>
+          <p class="text-dim">Manage enrolled students and track their progress</p>
+        </div>
+        <button class="btn btn-primary" (click)="openModal()">
+          <span class="material-icons">person_add</span> Enroll Student
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid" style="margin-bottom:24px">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(255,107,43,0.15)"><span class="material-icons text-orange">school</span></div>
+          <div class="stat-info"><div class="value">{{ data.students().length }}</div><div class="label">Total Students</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(16,212,142,0.12)"><span class="material-icons text-success">check_circle</span></div>
+          <div class="stat-info"><div class="value">{{ byStatus('active') }}</div><div class="label">Active</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(245,197,66,0.12)"><span class="material-icons" style="color:var(--warning)">pending</span></div>
+          <div class="stat-info"><div class="value">{{ pendingFeeCount() }}</div><div class="label">Fee Pending</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(16,212,142,0.12)"><span class="material-icons text-success">emoji_events</span></div>
+          <div class="stat-info"><div class="value">{{ byStatus('completed') }}</div><div class="label">Completed</div></div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="search-bar">
+        <input class="form-control" type="text" placeholder="Search students…" (change)="onInputChnage()" [(ngModel)]="search">
+        <select class="form-control" [(ngModel)]="filterStatus" (change)="onInputChnage()" style="max-width:160px">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+          <option value="dropped">Dropped</option>
+          <option value="pending">Pending</option>
+        </select>
+        <select class="form-control" [(ngModel)]="filterFee" style="max-width:160px">
+          <option value="">All Fees</option>
+          <option value="paid">Paid</option>
+          <option value="pending">Pending</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Batch</th>
+              <th>Status</th>
+              <th>Fees</th>
+              <th>Enrolled</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of filteredStudents(); track s.id) {
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <div class="mini-avatar">{{ initials(s.name) }}</div>
+                    <div>
+                      <div style="font-weight:500">{{ s.name }}</div>
+                      <div style="font-size:12px;color:var(--white-dim)">{{ s.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-size:13px">{{ s.course }}</td>
+                <td><span class="badge badge-info">{{ s.batch }}</span></td>
+                <td><span class="badge" [class]="getStatusBadge(s.status)">{{ s.status | titlecase }}</span></td>
+                <td>
+                  <div style="font-size:13px">
+                    <span [class]="s.paidAmount >= s.totalFee ? 'text-success' : 'text-danger'">
+                      ₹{{ s.paidAmount | number }}
+                    </span>
+                    <span style="color:var(--white-dim)"> / ₹{{ s.totalFee | number }}</span>
+                  </div>
+                  <div class="mini-bar">
+                    <div class="mini-fill" [style.width]="(s.paidAmount / s.totalFee * 100) + '%'"
+                         [style.background]="s.paidAmount >= s.totalFee ? 'var(--success)' : 'var(--orange)'"></div>
+                  </div>
+                </td>
+                <td style="font-size:13px">{{ s.enrollmentDate | date:'MMM d, y' }}</td>
+                <td>
+                  <div style="display:flex;gap:6px">
+                    <button class="btn btn-secondary btn-sm btn-icon" (click)="openModal(s)">
+                      <span class="material-icons" style="font-size:16px!important">edit</span>
+                    </button>
+                    <button class="btn btn-danger btn-sm btn-icon" (click)="confirmDelete(s)">
+                      <span class="material-icons" style="font-size:16px!important">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (filteredStudents().length === 0) {
+              <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--white-dim)">No students found</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    @if (modalOpen()) {
+      <div class="modal-overlay" (click)="closeModal($event)">
+        <div class="modal" style="max-width:750px">
+          <div class="modal-header">
+            <h3>{{ editing() ? 'Edit Student' : 'Enroll Student' }}</h3>
+            <button class="btn btn-secondary btn-sm btn-icon" (click)="closeModalDirect()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+          <form [formGroup]="studentForm">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div class="form-group">
+                <label>Full Name *</label>
+                <input class="form-control" formControlName="name" placeholder="Full name">
+              </div>
+              <div class="form-group">
+                <label>Email *</label>
+                <input class="form-control" type="email" formControlName="email" placeholder="student@gmail.com">
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input class="form-control" formControlName="phone" placeholder="10-digit number">
+              </div>
+              <div class="form-group">
+                <label>Course *</label>
+                <select class="form-control" formControlName="course" (change)="oncourseselect()">
+                  <option value="">Select Course</option>
+                  @for (c of data.courses(); track c.id) {
+                    <option [value]="c.title">{{ c.title }}</option>
+                  }
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Batch *</label>
+                <select class="form-control" formControlName="batch">
+                  @for (b of data.batches(); track b.id) {
+                    <option [value]="b.name">{{ b.name }}</option>
+                  }
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Status</label>
+                <select class="form-control" formControlName="status">
+                  <option value="active">Active</option>
+                  <option value="pending">Pending</option>
+                  <option value="completed">Completed</option>
+                  <option value="dropped">Dropped</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Total Fee (₹)</label>
+                <input class="form-control" type="number" formControlName="totalFee" readonly>
+              </div>
+              <div class="form-group">
+                <label>Paid Amount (₹)</label>
+                <input class="form-control" type="number" formControlName="paidAmount">
+              </div>
+              <div class="form-group">
+                <label>Enrollment Date</label>
+                <input class="form-control" type="date" formControlName="enrollmentDateStr">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Address</label>
+              <input class="form-control" formControlName="address" placeholder="City, State">
+            </div>
+          </form>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModalDirect()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveStudent()">
+              <span class="material-icons">save</span> {{ editing() ? 'Update' : 'Enroll' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Delete confirm -->
+    @if (deleteTarget()) {
+      <div class="modal-overlay" (click)="deleteTarget.set(null)">
+        <div class="modal" style="max-width:380px" (click)="$event.stopPropagation()">
+          <h3 style="margin-bottom:12px">Remove Student?</h3>
+          <p class="text-dim">Remove <strong>{{ deleteTarget()?.name }}</strong> from the system?</p>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="deleteTarget.set(null)">Cancel</button>
+            <button class="btn btn-danger" (click)="doDelete()"><span class="material-icons">delete</span> Remove</button>
+          </div>
+        </div>
+      </div>
+    }

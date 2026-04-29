@@ -1,0 +1,195 @@
+ 
+    <div>
+      <div class="page-header">
+        <div>
+          <h2>📚 Courses</h2>
+          <p class="text-dim">Manage the academy's course catalog</p>
+        </div>
+        @if (auth.isAdmin()) {
+          <button class="btn btn-primary" (click)="openModal()">
+            <span class="material-icons">add</span> Add Course
+          </button>
+        }
+      </div>
+
+      <!-- Filters -->
+      <div class="search-bar">
+        <input class="form-control" type="text" placeholder="Search courses…" (change)="oninptChange()" [(ngModel)]="search">
+        <select class="form-control" [(ngModel)]="filterCat" (change)="oninptChange()" style="max-width:160px">
+            <option value="">All Categories</option>
+            @for(cat of filtercats; track cat) {
+              <option [value]="cat">{{ cat | titlecase }}</option>
+            }
+        </select>
+        <select class="form-control" [(ngModel)]="filterStatus" (change)="oninptChange()" style="max-width:160px">
+            <option value="">All Status</option>
+            @for(status of filterStatusArr; track status) {
+              <option [value]="status">{{ status | titlecase }}</option>
+            }
+        </select>
+      </div>
+
+      <!-- Course cards -->
+      <div class="courses-grid">
+        @for (course of filteredCourses(); track course.id) {
+          <div class="course-card card">
+            <div class="course-header">
+              <div>
+                <span class="badge badge-{{ getCatColor(course.category) }}">{{ course.category | titlecase }}</span>
+                <span class="badge badge-{{ getStatusColor(course.status) }}" style="margin-left:6px">{{ course.status | titlecase }}</span>
+              </div>
+              <span class="course-code text-dim">{{ course.code }}</span>
+            </div>
+            <h3 class="course-title">{{ course.title }}</h3>
+            <p class="course-desc text-dim">{{ course.description }}</p>
+
+            <div class="course-topics">
+              @for (topic of course.topics.slice(0, 4); track topic) {
+                <span class="topic-chip">{{ topic }}</span>
+              }
+              @if (course.topics.length > 4) {
+                <span class="topic-chip" style="color:var(--white-dim)">+{{ course.topics.length - 4 }}</span>
+              }
+            </div>
+
+            <div class="course-stats">
+              <div class="cstat">
+                <span class="material-icons">schedule</span> {{ course.duration }}
+              </div>
+              <div class="cstat">
+                <span class="material-icons">currency_rupee</span> {{ course.fee | number }}
+              </div>
+              <div class="cstat">
+                <span class="material-icons">people</span> {{ course.enrolledCount }}/{{ course.maxCapacity }}
+              </div>
+            </div>
+
+            <div class="capacity-bar" style="margin:10px 0">
+              <div class="capacity-fill" [style.width]="(course.enrolledCount / course.maxCapacity * 100) + '%'"></div>
+            </div>
+
+            <div class="course-footer">
+              <span style="font-size:13px;color:var(--white-dim)">
+                <span class="material-icons" style="font-size:14px!important">person</span>
+                {{ course.instructor }}
+              </span>
+              @if (auth.isAdmin()) {
+                <div style="display:flex;gap:6px">
+                  <button class="btn btn-secondary btn-sm btn-icon" (click)="openModal(course)">
+                    <span class="material-icons" style="font-size:16px!important">edit</span>
+                  </button>
+                  <button class="btn btn-danger btn-sm btn-icon" (click)="confirmDelete(course)">
+                    <span class="material-icons" style="font-size:16px!important">delete</span>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+        @if (filteredCourses().length === 0) {
+          <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--white-dim)">
+            <span class="material-icons" style="font-size:48px!important;display:block;margin-bottom:12px;opacity:0.4">menu_book</span>
+            No courses found
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Modal -->
+    @if (modalOpen()) {
+      <div class="modal-overlay" (click)="closeModal($event)">
+        <div class="modal" style="max-width:620px">
+          <div class="modal-header">
+            <h3>{{ editing() ? 'Edit Course' : 'Add New Course' }}</h3>
+            <button class="btn btn-secondary btn-sm btn-icon" (click)="closeModalDirect()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+          <form [formGroup]="courseForm">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div class="form-group">
+                <label>Course Title *</label>
+                <input class="form-control" formControlName="title" placeholder="e.g. Full Stack Development">
+              </div>
+              <div class="form-group">
+                <label>Course Code *</label>
+                <input class="form-control" formControlName="code" placeholder="e.g. FS-001">
+              </div>
+              <div class="form-group">
+                <label>Category</label>
+                <select class="form-control" formControlName="category">
+                  <option value="frontend">Frontend</option>
+                  <option value="backend">Backend</option>
+                  <option value="fullstack">Fullstack</option>
+                  <option value="devops">DevOps</option>
+                  <option value="mobile">Mobile</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Status</label>
+                <select class="form-control" formControlName="status">
+                  <option value="active">Active</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="completed">Completed</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Duration</label>
+                <input class="form-control" formControlName="duration" placeholder="e.g. 3 months">
+              </div>
+              <div class="form-group">
+                <label>Fee (₹)</label>
+                <input class="form-control" type="number" formControlName="fee">
+              </div>
+              <div class="form-group">
+                <label>Instructor</label>
+                <select class="form-control" formControlName="instructor">
+                  @for (s of data.activeStaff(); track s.id) {
+                    @if (s.role === 'instructor') {
+                      <option [value]="s.name">{{ s.name }}</option>
+                    }
+                  }
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Max Capacity</label>
+                <input class="form-control" type="number" formControlName="maxCapacity">
+              </div>
+              <div class="form-group">
+                <label>Start Date</label>
+                <input class="form-control" type="date" formControlName="startDateStr">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-control" formControlName="description" rows="3" style="resize:vertical"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Topics (comma separated)</label>
+              <input class="form-control" formControlName="topicsStr" placeholder="HTML/CSS, JavaScript, React.js">
+            </div>
+          </form>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModalDirect()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveCourse()">
+              <span class="material-icons">save</span> {{ editing() ? 'Update' : 'Add Course' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Delete confirm -->
+    @if (deleteTarget()) {
+      <div class="modal-overlay" (click)="deleteTarget.set(null)">
+        <div class="modal" style="max-width:380px" (click)="$event.stopPropagation()">
+          <h3 style="margin-bottom:12px">Delete Course?</h3>
+          <p class="text-dim">Delete <strong>{{ deleteTarget()?.title }}</strong>?</p>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="deleteTarget.set(null)">Cancel</button>
+            <button class="btn btn-danger" (click)="doDelete()"><span class="material-icons">delete</span> Delete</button>
+          </div>
+        </div>
+      </div>
+    }

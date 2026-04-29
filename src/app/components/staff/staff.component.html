@@ -1,0 +1,192 @@
+
+    <div>
+      <div class="page-header">
+        <div>
+          <h2>👩‍🏫 Staff Management</h2>
+          <p class="text-dim">Manage instructors, coordinators, and support staff</p>
+        </div>
+        <button class="btn btn-primary" (click)="openModal()">
+          <span class="material-icons">person_add</span> Add Staff
+        </button>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-grid" style="margin-bottom:24px">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,212,255,0.1)"><span class="material-icons" style="color:var(--cyan)">people</span></div>
+          <div class="stat-info"><div class="value">{{ data.activeStaff().length }}</div><div class="label">Active Staff</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(255,107,43,0.15)"><span class="material-icons text-orange">school</span></div>
+          <div class="stat-info"><div class="value">{{ instructorCount() }}</div><div class="label">Instructors</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(16,212,142,0.12)"><span class="material-icons text-success">currency_rupee</span></div>
+          <div class="stat-info"><div class="value">₹{{ totalSalary() / 1000 | number:'1.0-0' }}K</div><div class="label">Monthly Salary</div></div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="search-bar">
+        <input class="form-control" type="text" placeholder="Search staff…" (change)="onChnageinput()" [(ngModel)]="search">
+        <select class="form-control" [(ngModel)]="filterDept" (change)="onChnageinput()" style="max-width:160px">
+          <option value="">All Departments</option>
+            @for(dept of AlldeptsArray; track dept) {
+                <option [value]="dept">{{ dept | titlecase }}</option>
+            }
+        </select>
+        <select class="form-control" [(ngModel)]="filterRole" (change)="onChnageinput()" style="max-width:160px">
+          <option value="">All Roles</option>
+            @for(role of AllStaffRolesArray; track role) {
+                <option [value]="role">{{ role | titlecase }}</option>
+            }
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Department</th>
+              <th>Contact</th>
+              <th>Salary</th>
+              <th>Joining Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of filteredStaff(); track s.id) {
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <div class="mini-avatar">{{ initials(s.name) }}</div>
+                    <div>
+                      <div style="font-weight:500">{{ s.name }}</div>
+                      <div style="font-size:12px;color:var(--white-dim)">{{ s.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge badge-info">{{ s.role | titlecase }}</span></td>
+                <td><span class="badge badge-secondary">{{ s.department | titlecase }}</span></td>
+                <td style="font-size:13px">{{ s.phone }}</td>
+                <td>₹{{ s.salary | number }}</td>
+                <td style="font-size:13px">{{ s.joiningDate | date:'MMM d, y' }}</td>
+                <td>
+                  <span class="badge" [class]="s.isActive ? 'badge-success' : 'badge-danger'">
+                    {{ s.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <div style="display:flex;gap:6px">
+                    <button class="btn btn-secondary btn-sm btn-icon" (click)="openModal(s)" title="Edit">
+                      <span class="material-icons" style="font-size:16px!important">edit</span>
+                    </button>
+                    <button class="btn" [class]="s.isActive ? 'btn-warning' : 'btn-success'" style="padding:7px" (click)="toggleStatus(s)" title="Toggle Status">
+                      <span class="material-icons" style="font-size:16px!important">{{ s.isActive ? 'block' : 'check_circle' }}</span>
+                    </button>
+                    <button class="btn btn-danger btn-sm btn-icon" (click)="confirmDelete(s)" title="Delete">
+                      <span class="material-icons" style="font-size:16px!important">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (filteredStaff().length === 0) {
+              <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--white-dim)">No staff found</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    @if (modalOpen()) {
+      <div class="modal-overlay" (click)="closeModal($event)">
+        <div class="modal" style="max-width:600px">
+          <div class="modal-header">
+            <h3>{{ editing() ? 'Edit Staff' : 'Add Staff Member' }}</h3>
+            <button class="btn btn-secondary btn-sm btn-icon" (click)="closeModalDirect()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+          <form [formGroup]="staffForm">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div class="form-group">
+                <label>Full Name *</label>
+                <input class="form-control" formControlName="name" placeholder="Full name">
+              </div>
+              <div class="form-group">
+                <label>Email *</label>
+                <input class="form-control" type="email" formControlName="email" placeholder="email@emmetacademy.in">
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input class="form-control" formControlName="phone" placeholder="10-digit number">
+              </div>
+              <div class="form-group">
+                <label>Role *</label>
+                <select class="form-control" formControlName="role">
+                  <option value="instructor">Instructor</option>
+                  <option value="coordinator">Coordinator</option>
+                  <option value="support">Support</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Department *</label>
+                <select class="form-control" formControlName="department">
+                  <option value="frontend">Frontend</option>
+                  <option value="backend">Backend</option>
+                  <option value="fullstack">Fullstack</option>
+                  <option value="devops">DevOps</option>
+                  <option value="management">Management</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Qualification</label>
+                <input class="form-control" formControlName="qualification" placeholder="B.Tech, MCA, etc.">
+              </div>
+              <div class="form-group">
+                <label>Salary (₹/month)</label>
+                <input class="form-control" type="number" formControlName="salary" placeholder="50000">
+              </div>
+              <div class="form-group">
+                <label>Joining Date</label>
+                <input class="form-control" type="date" formControlName="joiningDateStr">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Subjects (comma separated)</label>
+              <input class="form-control" formControlName="subjectsStr" placeholder="React.js, Node.js, TypeScript">
+            </div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+              <input type="checkbox" formControlName="isActive"> Active Status
+            </label>
+          </form>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModalDirect()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveStaff()">
+              <span class="material-icons">save</span> {{ editing() ? 'Update' : 'Add Staff' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Delete Confirm -->
+    @if (deleteTarget()) {
+      <div class="modal-overlay" (click)="deleteTarget.set(null)">
+        <div class="modal" style="max-width:380px" (click)="$event.stopPropagation()">
+          <h3 style="margin-bottom:12px">Remove Staff Member?</h3>
+          <p class="text-dim">Remove <strong>{{ deleteTarget()?.name }}</strong> from the system? This action cannot be undone.</p>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="deleteTarget.set(null)">Cancel</button>
+            <button class="btn btn-danger" (click)="doDelete()"><span class="material-icons">delete</span> Remove</button>
+          </div>
+        </div>
+      </div>
+    }

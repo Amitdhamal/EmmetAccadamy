@@ -1,0 +1,24 @@
+.mini-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--cyan), var(--orange));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.btn-warning {
+    background: rgba(245, 197, 66, 0.15);
+    color: var(--warning);
+    border: 1.5px solid rgba(245, 197, 66, 0.3);
+}
+
+.btn-warning:hover {
+    background: rgba(245, 197, 66, 0.25);
+}
+  
