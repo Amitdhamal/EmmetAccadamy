@@ -62,7 +62,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (s of filteredStudents(); track s.id) {
+            @for (s of filteredStudents(); track s._id) {
               <tr>
                 <td>
                   <div style="display:flex;align-items:center;gap:10px">
@@ -137,7 +137,7 @@
                 <label>Course *</label>
                 <select class="form-control" formControlName="course" (change)="oncourseselect()">
                   <option value="">Select Course</option>
-                  @for (c of data.courses(); track c.id) {
+                  @for (c of data.courses(); track c._id) {
                     <option [value]="c.title">{{ c.title }}</option>
                   }
                 </select>

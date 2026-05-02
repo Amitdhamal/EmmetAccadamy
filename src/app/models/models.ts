@@ -34,7 +34,7 @@ export interface Staff {
 
 // ===== STUDENT MODEL =====
 export interface Student {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   phone: string;
@@ -52,7 +52,7 @@ export interface Student {
 
 // ===== COURSE MODEL =====
 export interface Course {
-  id: string;
+  _id: string;
   title: string;
   code: string;
   category: 'frontend' | 'backend' | 'fullstack' | 'devops' | 'mobile';

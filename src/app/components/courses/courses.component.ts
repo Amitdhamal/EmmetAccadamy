@@ -45,7 +45,9 @@ export class CoursesComponent  implements OnInit {
 
   filteredCourses = computed(() => {
     let list = this.data.courses();
-
+    console.log('Filtered courses:', list);
+    if (this.filterCat) list = list.filter(x => x.category === this.filterCat);
+    if (this.filterStatus) list = list.filter(x => x.status === this.filterStatus);
     return list;
   });
 
@@ -61,7 +63,7 @@ export class CoursesComponent  implements OnInit {
   openModal(course?: Course) {
     if (course) {
       this.editing.set(true);
-      this.editId.set(course.id);
+      this.editId.set(course._id);
       this.courseForm.reset({
         title: course.title,
         code: course.code,
@@ -107,7 +109,7 @@ export class CoursesComponent  implements OnInit {
       topicsStr: string;
     };
 
-    const payload = {
+    const basePayload = {
       title: formValue.title,
       code: formValue.code,
       category: formValue.category,
@@ -123,10 +125,10 @@ export class CoursesComponent  implements OnInit {
     };
 
     if (this.editing()) {
-      this.data.updateCourse(this.editId(), payload);
+      this.data.updateCourse(this.editId(), basePayload);
       this.toast.success('Course updated!');
     } else {
-      this.data.addCourse(payload);
+      this.data.addCourse(basePayload);
       this.toast.success('Course added!');
     }
     this.closeModalDirect();
@@ -142,7 +144,7 @@ export class CoursesComponent  implements OnInit {
   }
 
   confirmDelete(c: Course) { this.deleteTarget.set(c); }
-  doDelete() { if (this.deleteTarget()) { this.data.deleteCourse(this.deleteTarget()!.id); this.toast.success('Course deleted.'); this.deleteTarget.set(null); } }
+  doDelete() { if (this.deleteTarget()) { this.data.deleteCourse(this.deleteTarget()!._id); this.toast.success('Course deleted.'); this.deleteTarget.set(null); } }
 
   getCatColor(cat: string) { const m: Record<string,string> = { frontend: 'info', backend: 'warning', fullstack: 'success', devops: 'danger', mobile: 'secondary' }; return m[cat] ?? 'secondary'; }
   getStatusColor(s: string) { const m: Record<string,string> = { active: 'success', upcoming: 'warning', completed: 'info', draft: 'secondary' }; return m[s] ?? 'secondary'; }

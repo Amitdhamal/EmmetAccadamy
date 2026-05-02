@@ -51,7 +51,7 @@ export class BatchesComponent {
 
   onCourseSelect() {
     const courseId = this.batchForm.get('courseId')?.value;
-    const course = this.data.courses().find(c => c.id === courseId);
+    const course = this.data.courses().find(c => c._id === courseId);
     if (course) {
       this.batchForm.patchValue({
         courseName: course.title,

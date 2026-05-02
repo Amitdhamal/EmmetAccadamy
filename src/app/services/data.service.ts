@@ -1,9 +1,14 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Notice, Staff, Student, Course, Batch } from '../models/models';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
-
+  constructor(private http: HttpClient) {
+    this.getAllstudents();
+    this.getAllcourses();
+  }
   // ===========================
   // NOTICES
   // ===========================
@@ -133,255 +138,116 @@ export class DataService {
   // ===========================
   // STUDENTS
   // ===========================
-  private _students = signal<Student[]>([
-    // --- Original 6 ---
-    {
-      id: 'st1', name: 'Arjun Mehta', email: 'arjun@gmail.com', phone: '9321098765',
-      course: 'Full Stack Development', batch: 'FS-Jan-2025',
-      enrollmentDate: new Date('2025-01-05'), status: 'active',
-      feePaid: true, totalFee: 45000, paidAmount: 45000,
-      address: 'Pune, Maharashtra', createdAt: new Date('2025-01-05')
-    },
-    {
-      id: 'st2', name: 'Kavya Reddy', email: 'kavya@gmail.com', phone: '9210987654',
-      course: 'Frontend Development', batch: 'FE-Jan-2025',
-      enrollmentDate: new Date('2025-01-06'), status: 'active',
-      feePaid: false, totalFee: 28000, paidAmount: 14000,
-      address: 'Nagpur, Maharashtra', createdAt: new Date('2025-01-06')
-    },
-    {
-      id: 'st3', name: 'Suraj Pawar', email: 'suraj@gmail.com', phone: '9109876543',
-      course: 'Backend Development', batch: 'BE-Dec-2024',
-      enrollmentDate: new Date('2024-12-01'), status: 'completed',
-      feePaid: true, totalFee: 32000, paidAmount: 32000,
-      address: 'Mumbai, Maharashtra', createdAt: new Date('2024-12-01')
-    },
-    {
-      id: 'st4', name: 'Anjali Singh', email: 'anjali@gmail.com', phone: '9098765432',
-      course: 'Full Stack Development', batch: 'FS-Jan-2025',
-      enrollmentDate: new Date('2025-01-08'), status: 'active',
-      feePaid: true, totalFee: 45000, paidAmount: 22500,
-      address: 'Nashik, Maharashtra', createdAt: new Date('2025-01-08')
-    },
-    {
-      id: 'st5', name: 'Dev Kapoor', email: 'dev@gmail.com', phone: '8987654321',
-      course: 'Frontend Development', batch: 'FE-Nov-2024',
-      enrollmentDate: new Date('2024-11-15'), status: 'dropped',
-      feePaid: false, totalFee: 28000, paidAmount: 10000,
-      address: 'Aurangabad, Maharashtra', createdAt: new Date('2024-11-15')
-    },
-    {
-      id: 'st6', name: 'Riya Ghosh', email: 'riya@gmail.com', phone: '8876543210',
-      course: 'Full Stack Development', batch: 'FS-Feb-2025',
-      enrollmentDate: new Date('2025-01-20'), status: 'pending',
-      feePaid: false, totalFee: 45000, paidAmount: 0,
-      address: 'Kolhapur, Maharashtra', createdAt: new Date('2025-01-20')
-    },
 
-    // --- 20 New Students ---
-    {
-      id: 'st7', name: 'Rohan Deshmukh', email: 'rohan.deshmukh@gmail.com', phone: '9312345678',
-      course: 'Full Stack Development', batch: 'FS-Feb-2025',
-      enrollmentDate: new Date('2025-02-01'), status: 'active',
-      feePaid: true, totalFee: 45000, paidAmount: 45000,
-      address: 'Pune, Maharashtra', createdAt: new Date('2025-02-01')
-    },
-    {
-      id: 'st8', name: 'Sneha Kulkarni', email: 'sneha.kulkarni@gmail.com', phone: '9223456789',
-      course: 'Frontend Development', batch: 'FE-Feb-2025',
-      enrollmentDate: new Date('2025-02-03'), status: 'active',
-      feePaid: false, totalFee: 28000, paidAmount: 14000,
-      address: 'Pune, Maharashtra', createdAt: new Date('2025-02-03')
-    },
-    {
-      id: 'st9', name: 'Karan Joshi', email: 'karan.joshi@gmail.com', phone: '9134567890',
-      course: 'Backend Development', batch: 'BE-Jan-2025',
-      enrollmentDate: new Date('2025-01-10'), status: 'active',
-      feePaid: true, totalFee: 32000, paidAmount: 32000,
-      address: 'Mumbai, Maharashtra', createdAt: new Date('2025-01-10')
-    },
-    {
-      id: 'st10', name: 'Pooja Patil', email: 'pooja.patil@gmail.com', phone: '9045678901',
-      course: 'Full Stack Development', batch: 'FS-Jan-2025',
-      enrollmentDate: new Date('2025-01-12'), status: 'active',
-      feePaid: false, totalFee: 45000, paidAmount: 22500,
-      address: 'Solapur, Maharashtra', createdAt: new Date('2025-01-12')
-    },
-    {
-      id: 'st11', name: 'Amit Sharma', email: 'amit.sharma@gmail.com', phone: '8956789012',
-      course: 'Backend Development', batch: 'BE-Dec-2024',
-      enrollmentDate: new Date('2024-12-10'), status: 'completed',
-      feePaid: true, totalFee: 32000, paidAmount: 32000,
-      address: 'Nagpur, Maharashtra', createdAt: new Date('2024-12-10')
-    },
-    {
-      id: 'st12', name: 'Priya Nair', email: 'priya.nair@gmail.com', phone: '8867890123',
-      course: 'Frontend Development', batch: 'FE-Jan-2025',
-      enrollmentDate: new Date('2025-01-14'), status: 'active',
-      feePaid: true, totalFee: 28000, paidAmount: 28000,
-      address: 'Thane, Maharashtra', createdAt: new Date('2025-01-14')
-    },
-    {
-      id: 'st13', name: 'Vishal More', email: 'vishal.more@gmail.com', phone: '9378901234',
-      course: 'Full Stack Development', batch: 'FS-Feb-2025',
-      enrollmentDate: new Date('2025-02-05'), status: 'active',
-      feePaid: false, totalFee: 45000, paidAmount: 0,
-      address: 'Nashik, Maharashtra', createdAt: new Date('2025-02-05')
-    },
-    {
-      id: 'st14', name: 'Deepika Iyer', email: 'deepika.iyer@gmail.com', phone: '9289012345',
-      course: 'Backend Development', batch: 'BE-Jan-2025',
-      enrollmentDate: new Date('2025-01-18'), status: 'active',
-      feePaid: false, totalFee: 32000, paidAmount: 16000,
-      address: 'Aurangabad, Maharashtra', createdAt: new Date('2025-01-18')
-    },
-    {
-      id: 'st15', name: 'Nikhil Bane', email: 'nikhil.bane@gmail.com', phone: '9190123456',
-      course: 'Frontend Development', batch: 'FE-Nov-2024',
-      enrollmentDate: new Date('2024-11-20'), status: 'dropped',
-      feePaid: false, totalFee: 28000, paidAmount: 7000,
-      address: 'Kolhapur, Maharashtra', createdAt: new Date('2024-11-20')
-    },
-    {
-      id: 'st16', name: 'Sakshi Shinde', email: 'sakshi.shinde@gmail.com', phone: '9001234567',
-      course: 'Full Stack Development', batch: 'FS-Jan-2025',
-      enrollmentDate: new Date('2025-01-22'), status: 'pending',
-      feePaid: false, totalFee: 45000, paidAmount: 0,
-      address: 'Pune, Maharashtra', createdAt: new Date('2025-01-22')
-    },
-    {
-      id: 'st17', name: 'Rahul Wagh', email: 'rahul.wagh@gmail.com', phone: '8912345670',
-      course: 'Backend Development', batch: 'BE-Feb-2025',
-      enrollmentDate: new Date('2025-02-08'), status: 'active',
-      feePaid: true, totalFee: 32000, paidAmount: 32000,
-      address: 'Mumbai, Maharashtra', createdAt: new Date('2025-02-08')
-    },
-    {
-      id: 'st18', name: 'Ananya Bhosale', email: 'ananya.bhosale@gmail.com', phone: '8823456701',
-      course: 'Frontend Development', batch: 'FE-Feb-2025',
-      enrollmentDate: new Date('2025-02-10'), status: 'active',
-      feePaid: true, totalFee: 28000, paidAmount: 28000,
-      address: 'Nagpur, Maharashtra', createdAt: new Date('2025-02-10')
-    },
-    {
-      id: 'st19', name: 'Siddharth Rane', email: 'siddharth.rane@gmail.com', phone: '9734567012',
-      course: 'Full Stack Development', batch: 'FS-Mar-2025',
-      enrollmentDate: new Date('2025-03-01'), status: 'pending',
-      feePaid: false, totalFee: 45000, paidAmount: 0,
-      address: 'Nashik, Maharashtra', createdAt: new Date('2025-03-01')
-    },
-    {
-      id: 'st20', name: 'Meera Pillai', email: 'meera.pillai@gmail.com', phone: '9645670123',
-      course: 'Backend Development', batch: 'BE-Feb-2025',
-      enrollmentDate: new Date('2025-02-12'), status: 'active',
-      feePaid: false, totalFee: 32000, paidAmount: 8000,
-      address: 'Thane, Maharashtra', createdAt: new Date('2025-02-12')
-    },
-    {
-      id: 'st21', name: 'Aakash Tiwari', email: 'aakash.tiwari@gmail.com', phone: '9556701234',
-      course: 'Frontend Development', batch: 'FE-Dec-2024',
-      enrollmentDate: new Date('2024-12-05'), status: 'completed',
-      feePaid: true, totalFee: 28000, paidAmount: 28000,
-      address: 'Solapur, Maharashtra', createdAt: new Date('2024-12-05')
-    },
-    {
-      id: 'st22', name: 'Neha Jadhav', email: 'neha.jadhav@gmail.com', phone: '9467012345',
-      course: 'Full Stack Development', batch: 'FS-Feb-2025',
-      enrollmentDate: new Date('2025-02-15'), status: 'active',
-      feePaid: true, totalFee: 45000, paidAmount: 45000,
-      address: 'Pune, Maharashtra', createdAt: new Date('2025-02-15')
-    },
-    {
-      id: 'st23', name: 'Omkar Sawant', email: 'omkar.sawant@gmail.com', phone: '9378123456',
-      course: 'Backend Development', batch: 'BE-Jan-2025',
-      enrollmentDate: new Date('2025-01-25'), status: 'active',
-      feePaid: false, totalFee: 32000, paidAmount: 16000,
-      address: 'Kolhapur, Maharashtra', createdAt: new Date('2025-01-25')
-    },
-    {
-      id: 'st24', name: 'Tanvi Deshpande', email: 'tanvi.deshpande@gmail.com', phone: '9289234567',
-      course: 'Frontend Development', batch: 'FE-Feb-2025',
-      enrollmentDate: new Date('2025-02-18'), status: 'active',
-      feePaid: false, totalFee: 28000, paidAmount: 14000,
-      address: 'Aurangabad, Maharashtra', createdAt: new Date('2025-02-18')
-    },
-    {
-      id: 'st25', name: 'Yash Kadam', email: 'yash.kadam@gmail.com', phone: '9190345678',
-      course: 'Full Stack Development', batch: 'FS-Mar-2025',
-      enrollmentDate: new Date('2025-03-05'), status: 'pending',
-      feePaid: false, totalFee: 45000, paidAmount: 22500,
-      address: 'Mumbai, Maharashtra', createdAt: new Date('2025-03-05')
-    },
-    {
-      id: 'st26', name: 'Ishaan Chavan', email: 'ishaan.chavan@gmail.com', phone: '9001456789',
-      course: 'Backend Development', batch: 'BE-Mar-2025',
-      enrollmentDate: new Date('2025-03-08'), status: 'active',
-      feePaid: true, totalFee: 32000, paidAmount: 32000,
-      address: 'Pune, Maharashtra', createdAt: new Date('2025-03-08')
-    }
-  ]);
+  getAllstudents() {
+    this.http.get<any>(`${environment.baseUrl}students`).subscribe((res) => {
+      console.log('Fetched students from API:', res);
+      let data = res.data.map((s: any) => ({
+        ...s
+      }));
+      this._students.set(data);
+    })
+  }
+  private _students = signal<Student[]>([]);
 
   readonly students = this._students.asReadonly();
 
-  addStudent(student: Omit<Student, 'id' | 'createdAt'>,): Student {
-    const course = this._courses().find(c => c.title === student.course);
-    if (course) {
-      course.enrolledCount += 1;
+  addStudent(student: Omit<Student, '_id' | 'createdAt'>): void {
+    const payload: any = { ...student };
+    if (payload.enrollmentDate instanceof Date) {
+      payload.enrollmentDate = payload.enrollmentDate.toISOString();
     }
-    const newStudent: Student = { ...student, id: this.genId('stu'), createdAt: new Date() };
-    this._students.update(list => [newStudent, ...list]);
-    return newStudent;
+
+    this.http.post<Student | any>(`${environment.baseUrl}students`, payload).subscribe({
+      next: res => {
+        console.log('Student added successfully:', res);
+        const createdStudent = res;
+        console.log('Created student object:', createdStudent);
+
+        if (createdStudent && (createdStudent._id || createdStudent._id)) {
+          this._students.update(list => [createdStudent, ...list]);
+          
+          // Increase enrolled count for the batch
+          if (createdStudent.course) {
+            let selectedCourseid = this._courses().find(c => c.title === createdStudent.course)?._id;
+            if (selectedCourseid) {
+              this.updateCourse(selectedCourseid, { enrolledCount: (this._courses().find(c => c._id === selectedCourseid)?.enrolledCount ?? 0) + 1 });
+              this.getAllcourses();
+            }
+            // if (selectedCourse) {
+            //   this._courses.update(list =>
+            //     list.map(c => c.title === createdStudent.course ? { ...c, enrolledCount: c.enrolledCount + 1 } : c)
+            //   );
+            //   this.getAllcourses();
+            // }
+          }
+          
+          return;
+        }
+
+        this.getAllstudents();
+      },
+      error: err => {
+        console.log('Student add failed:', err);
+      }
+    });
   }
 
   updateStudent(id: string, updates: Partial<Student>): void {
-    this._students.update(list => list.map(s => s.id === id ? { ...s, ...updates } : s));
+    console.log('Updating student with ID:', id, 'Updates:', updates);
+    const payload = { ...updates } as any;
+    if (payload.enrollmentDate instanceof Date) {
+      payload.enrollmentDate = payload.enrollmentDate.toISOString();
+    }
+
+    this.http.put<any>(`${environment.baseUrl}students/${id}`, payload).subscribe({
+      next: res => {
+        console.log('Student updated successfully:', res);
+        const updatedStudent = res?.data ?? res;
+        if (updatedStudent && (updatedStudent._id || updatedStudent.id)) {
+          this._students.update(list =>
+            list.map(s => s._id === id ? { ...s, ...updatedStudent } : s)
+          );
+        } else {
+          this.getAllstudents();
+        }
+      },
+      error: err => {
+        console.log('Student update failed:', err);
+      }
+    });
   }
 
   deleteStudent(id: string): void {
-    this._students.update(list => list.filter(s => s.id !== id));
+    this.http.delete<any>(`${environment.baseUrl}students/${id}`).subscribe({
+      next: res => {
+        console.log('Student deleted successfully:', res);
+        this._students.update(list => list.filter(s => s._id !== id));
+      },
+      error: err => {
+        console.log('Student delete failed:', err);
+      }
+    });
   }
 
   getStudentById(id: string): Student | undefined {
-    return this._students().find(s => s.id === id);
+    return this._students().find(s => s._id === id);
   }
 
   // ===========================
   // COURSES
   // ===========================
-  private _courses = signal<Course[]>([
-    {
-      id: 'c1', title: 'Full Stack Web Development', code: 'FS-001',
-      category: 'fullstack', description: 'Complete MERN stack development from scratch to deployment. Covers HTML, CSS, JavaScript, React, Node.js, Express, and MongoDB.',
-      duration: '4 months', fee: 45000, instructor: 'Amit Joshi',
-      enrolledCount: 24, maxCapacity: 30, status: 'active',
-      topics: ['HTML/CSS', 'JavaScript ES6+', 'React.js', 'Node.js', 'MongoDB', 'Git', 'Docker'],
-      startDate: new Date('2025-01-15'), createdAt: new Date('2024-12-01')
-    },
-    {
-      id: 'c2', title: 'Frontend Development', code: 'FE-001',
-      category: 'frontend', description: 'Master modern frontend development with React and Angular. Learn state management, performance optimization, and UI/UX principles.',
-      duration: '3 months', fee: 28000, instructor: 'Priya Sharma',
-      enrolledCount: 18, maxCapacity: 25, status: 'active',
-      topics: ['HTML5', 'CSS3', 'JavaScript', 'React.js', 'Angular', 'TypeScript'],
-      startDate: new Date('2025-01-10'), createdAt: new Date('2024-12-01')
-    },
-    {
-      id: 'c3', title: 'Backend Development with Node.js', code: 'BE-001',
-      category: 'backend', description: 'Build robust server-side applications using Node.js, Express, and databases. REST APIs, authentication, and microservices architecture.',
-      duration: '3 months', fee: 32000, instructor: 'Rohit Desai',
-      enrolledCount: 15, maxCapacity: 20, status: 'active',
-      topics: ['Node.js', 'Express.js', 'REST APIs', 'MySQL', 'MongoDB', 'JWT'],
-      startDate: new Date('2025-01-12'), createdAt: new Date('2024-12-01')
-    },
-    {
-      id: 'c4', title: 'DevOps & Cloud Basics', code: 'DO-001',
-      category: 'devops', description: 'Introduction to DevOps practices, CI/CD pipelines, Docker containers, and AWS cloud services.',
-      duration: '2 months', fee: 22000, instructor: 'Amit Joshi',
-      enrolledCount: 0, maxCapacity: 20, status: 'upcoming',
-      topics: ['Linux', 'Docker', 'Kubernetes', 'CI/CD', 'AWS', 'Nginx'],
-      startDate: new Date('2025-03-01'), createdAt: new Date('2025-01-15')
-    }
-  ]);
+  private _courses = signal<Course[]>([]);
+
+  getAllcourses() {
+    this.http.get<any>(`${environment.baseUrl}courses`).subscribe((res) => {
+      console.log('Fetched courses from API:', res);
+      let data = res.data.map((s: any) => ({
+        ...s
+      }))
+      this._courses.set(data);
+    });
+  }
 
   readonly courses = this._courses.asReadonly();
   getcatories() {
@@ -403,18 +269,63 @@ export class DataService {
     return Array.from(roles);
   }
 
-  addCourse(course: Omit<Course, 'id' | 'createdAt'>): Course {
-    const newCourse: Course = { ...course, id: this.genId('c'), createdAt: new Date() };
-    this._courses.update(list => [newCourse, ...list]);
-    return newCourse;
+  addCourse(course: Omit<Course, '_id' | 'createdAt'>): void {
+    const payload: any = { ...course };
+    if (payload.startDate instanceof Date) {
+      payload.startDate = payload.startDate.toISOString();
+    }
+
+    this.http.post<Course | any>(`${environment.baseUrl}courses`, payload).subscribe({
+      next: res => {
+        console.log('Course added successfully:', res);
+        const createdCourse = res.data ?? res;
+        console.log('Created course object:', createdCourse);
+
+        if (createdCourse && createdCourse._id) {
+          this._courses.update(list => [createdCourse, ...list]);
+          return;
+        }
+
+        this.getAllcourses();
+      },
+      error: err => {
+        console.log('Course add failed:', err);
+      }
+    });
   }
 
   updateCourse(id: string, updates: Partial<Course>): void {
-    this._courses.update(list => list.map(c => c.id === id ? { ...c, ...updates } : c));
+    const payload = { ...updates } as any;
+    if (payload.startDate instanceof Date) {
+      payload.startDate = payload.startDate.toISOString();
+    }
+
+    this.http.put<any>(`${environment.baseUrl}courses/${id}`, payload).subscribe({
+      next: res => {
+        console.log('Course updated successfully:', res);
+        const updatedCourse = res?.data ?? res;
+        if (updatedCourse && (updatedCourse._id || updatedCourse.id)) {
+          this._courses.update(list =>
+            list.map(c => c._id === id ? { ...c, ...updatedCourse } : c)
+          );
+        }
+      },
+      error: err => {
+        console.log('Course update failed:', err);
+      }
+    });
   }
 
   deleteCourse(id: string): void {
-    this._courses.update(list => list.filter(c => c.id !== id));
+    this.http.delete<any>(`${environment.baseUrl}courses/${id}`).subscribe({
+      next: res => {
+        console.log('Course deleted successfully:', res);
+        this._courses.update(list => list.filter(c => c._id !== id));
+      },
+      error: err => {
+        console.log('Course delete failed:', err);
+      }
+    });
   }
 
   // ===========================

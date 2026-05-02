@@ -98,8 +98,8 @@
               <label>Course *</label>
               <select class="form-control" formControlName="courseId" (change)="onCourseSelect()">
                 <option value="">Select course</option>
-                @for (c of data.courses(); track c.id) {
-                  <option [value]="c.id">{{ c.title }}</option>
+                @for (c of data.courses(); track c._id) {
+                  <option [value]="c._id">{{ c.title }}</option>
                 }
               </select>
             </div>

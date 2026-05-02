@@ -30,8 +30,8 @@
       </div>
 
       <!-- Course cards -->
-      <div class="courses-grid">
-        @for (course of filteredCourses(); track course.id) {
+      <div class="courses-grid"> 
+        @for (course of filteredCourses(); track course._id) {
           <div class="course-card card">
             <div class="course-header">
               <div>

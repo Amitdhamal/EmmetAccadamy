@@ -42,10 +42,10 @@ export class StudentsComponent {
 
   filteredStudents = computed(() => {
     let list = this.data.students();
-    // if (this.search) { const s = this.search.toLowerCase(); list = list.filter(x => x.name.toLowerCase().includes(s) || x.email.toLowerCase().includes(s)); }
-    // if (this.filterStatus) list = list.filter(x => x.status === this.filterStatus);
-    // if (this.filterFee === 'paid') list = list.filter(x => x.paidAmount >= x.totalFee);
-    // if (this.filterFee === 'pending') list = list.filter(x => x.paidAmount < x.totalFee);
+    if (this.search) { const s = this.search.toLowerCase(); list = list.filter(x => x.name.toLowerCase().includes(s) || x.email.toLowerCase().includes(s)); }
+    if (this.filterStatus) list = list.filter(x => x.status === this.filterStatus);
+    if (this.filterFee === 'paid') list = list.filter(x => x.paidAmount >= x.totalFee);
+    if (this.filterFee === 'pending') list = list.filter(x => x.paidAmount < x.totalFee);
     return list;
   });
 
@@ -56,7 +56,7 @@ export class StudentsComponent {
   }
 
   onInputChange() {
-    // Trigger change detection by re-computing the filtered list
+    // Trigger change detection by re-computing the filtered listd
     this.filteredStudents = computed(() => {
       let list = this.data.students();
       if (this.search) { const s = this.search.toLowerCase(); list = list.filter(x => x.name.toLowerCase().includes(s) || x.email.toLowerCase().includes(s)); }
@@ -74,9 +74,10 @@ export class StudentsComponent {
   }
 
   openModal(student?: Student) {
+    console.log('Opening modal for student:', student);
     if (student) {
       this.editing.set(true);
-      this.editId.set(student.id);
+      this.editId.set(student._id);
       this.studentForm.reset({
         name: student.name,
         email: student.email,
@@ -141,13 +142,14 @@ export class StudentsComponent {
       this.toast.success('Student updated!');
     } else {
       this.data.addStudent(payload);
+      console.log('Student added:', payload);
       this.toast.success('Student enrolled!');
     }
     this.closeModalDirect();
   }
 
   confirmDelete(s: Student) { this.deleteTarget.set(s); }
-  doDelete() { if (this.deleteTarget()) { this.data.deleteStudent(this.deleteTarget()!.id); this.toast.success('Student removed.'); this.deleteTarget.set(null); } }
+  doDelete() { if (this.deleteTarget()) { this.data.deleteStudent(this.deleteTarget()!._id); this.toast.success('Student removed.'); this.deleteTarget.set(null); } }
 
   getStatusBadge(status: string) {
     const m: Record<string, string> = { active: 'badge-success', completed: 'badge-info', dropped: 'badge-danger', pending: 'badge-warning' };
